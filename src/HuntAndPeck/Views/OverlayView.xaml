@@ -21,7 +21,34 @@
         <SolidColorBrush Color="Transparent" />
     </local:ForegroundWindow.Background>
     <Grid x:Name="layoutGrid">
-        <TextBox x:Name="MatchStringControl" Text="{Binding MatchString, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}" Width="50" VerticalAlignment="Bottom" Background="Transparent" Foreground="White" />
+        <!-- Typed-filter indicator.
+             This was a bare 50px TextBox with a transparent background and
+             white text, so on any light-coloured window you could not see
+             what you had typed at all. Now a self-contained pill that reads
+             against whatever is behind it. -->
+        <Border HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Margin="0,0,0,54"
+                Background="#F21E1E2E"
+                BorderBrush="#7089B4FA" BorderThickness="1"
+                CornerRadius="9" Padding="15,9">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" BlurRadius="14" ShadowDepth="2"
+                                  Opacity="0.5" Direction="270" RenderingBias="Quality" />
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="HINT" FontSize="10" FontWeight="SemiBold"
+                           FontFamily="Segoe UI" Foreground="#7F849C"
+                           VerticalAlignment="Center" Margin="0,1,12,0" />
+                <TextBox x:Name="MatchStringControl"
+                         Text="{Binding MatchString, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
+                         MinWidth="52"
+                         FontFamily="Consolas" FontSize="15" FontWeight="Bold"
+                         Background="Transparent" Foreground="#89B4FA"
+                         CaretBrush="#89B4FA"
+                         BorderThickness="0" Padding="0"
+                         VerticalContentAlignment="Center" />
+            </StackPanel>
+        </Border>
         <ItemsControl ItemsSource="{Binding Hints}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
