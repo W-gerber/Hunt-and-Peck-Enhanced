@@ -9,6 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HuntAndPeck</RootNamespace>
     <AssemblyName>hap</AssemblyName>
+    <!-- Kept as 'hap' deliberately. The assembly name keys the per-user
+         settings folder, so renaming the binary would orphan the saved
+         hotkeys and colours, and it would also break the Startup shortcut
+         and the GlazeWM `window_process: hap` ignore rule. Display name is
+         Vimium Desktop via AssemblyTitle/AssemblyProduct. -->
+    <ApplicationIcon>Resources\vimium-desktop.ico</ApplicationIcon>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -87,6 +93,7 @@
     </Compile>
     <Compile Include="Extensions\IEnumerableTExtensions.cs" />
     <Compile Include="Extensions\RectExtensions.cs" />
+    <Compile Include="Models\ColorOption.cs" />
     <Compile Include="Models\DebugHint.cs" />
     <Compile Include="Models\Hint.cs" />
     <Compile Include="Models\HintSession.cs" />
@@ -158,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\originalbird.ico" />
+    <Resource Include="Resources\vimium-desktop.ico" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\DebugOverlayView.xaml">
