@@ -7,8 +7,8 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HuntAndPeck")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Vimium Desktop")]
+[assembly: AssemblyDescription("Hint-based keyboard navigation for Windows.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyTrademark("")]
