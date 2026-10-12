@@ -55,12 +55,15 @@
         </x:Array>
 
         <x:Array x:Key="FontSizeList" Type="sys:String">
-            <sys:String>8</sys:String><sys:String>9</sys:String><sys:String>10</sys:String>
-            <sys:String>11</sys:String><sys:String>12</sys:String><sys:String>13</sys:String>
-            <sys:String>14</sys:String><sys:String>15</sys:String><sys:String>16</sys:String>
-            <sys:String>17</sys:String><sys:String>18</sys:String><sys:String>19</sys:String>
-            <sys:String>20</sys:String><sys:String>21</sys:String><sys:String>22</sys:String>
-            <sys:String>23</sys:String><sys:String>24</sys:String>
+            <sys:String>8</sys:String><sys:String>8.5</sys:String><sys:String>9</sys:String><sys:String>9.5</sys:String>
+            <sys:String>10</sys:String><sys:String>10.5</sys:String><sys:String>11</sys:String><sys:String>11.5</sys:String>
+            <sys:String>12</sys:String><sys:String>12.5</sys:String><sys:String>13</sys:String><sys:String>13.5</sys:String>
+            <sys:String>14</sys:String><sys:String>14.5</sys:String><sys:String>15</sys:String><sys:String>15.5</sys:String>
+            <sys:String>16</sys:String><sys:String>16.5</sys:String><sys:String>17</sys:String><sys:String>17.5</sys:String>
+            <sys:String>18</sys:String><sys:String>18.5</sys:String><sys:String>19</sys:String><sys:String>19.5</sys:String>
+            <sys:String>20</sys:String><sys:String>20.5</sys:String><sys:String>21</sys:String><sys:String>21.5</sys:String>
+            <sys:String>22</sys:String><sys:String>22.5</sys:String><sys:String>23</sys:String><sys:String>23.5</sys:String>
+            <sys:String>24</sys:String>
         </x:Array>
 
         <x:Array x:Key="FontFamilyList" Type="sys:String">
