@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Windows;
 using UIAutomationClient;
 
 namespace HuntAndPeck.Models
 {
-    /// <summary>
-    /// Represents a Windows UI Automation based toggle hint
-    /// </summary>
+
     internal class UiAutomationToggleHint : Hint
     {
         private readonly IUIAutomationTogglePattern _togglePattern;

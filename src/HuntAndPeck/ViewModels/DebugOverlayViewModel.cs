@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Windows;
 using HuntAndPeck.Models;
 using System.Linq;
@@ -17,9 +17,6 @@ namespace HuntAndPeck.ViewModels
 
         public List<DebugHintViewModel> Hints { get; set; }
 
-        /// <summary>
-        /// Bounds in logical screen coordiantes
-        /// </summary>
         public Rect Bounds
         {
             get

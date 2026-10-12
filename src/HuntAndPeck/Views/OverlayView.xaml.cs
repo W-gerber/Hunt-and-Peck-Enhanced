@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -6,9 +6,7 @@ using HuntAndPeck.ViewModels;
 
 namespace HuntAndPeck.Views
 {
-    /// <summary>
-    /// Interaction logic for OverlayView.xaml
-    /// </summary>
+
     public partial class OverlayView
     {
         public OverlayView()
@@ -22,10 +20,8 @@ namespace HuntAndPeck.Views
             var scaleX = m.M11;
             var scaleY = m.M22;
 
-            // scale the items for non-96 DPIs
             layoutGrid.LayoutTransform = new ScaleTransform(1/scaleX, 1/scaleY);
 
-            // resize the window for non-96 DPIs
             var vm = DataContext as OverlayViewModel;
             Left = vm.Bounds.Left / scaleX;
             Top = vm.Bounds.Top / scaleY;

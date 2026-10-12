@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Windows;
 using UIAutomationClient;
 
 namespace HuntAndPeck.Models
 {
-    /// <summary>
-    /// Represents a Windows UI Automation based select hint
-    /// </summary>
+
     internal class UiAutomationSelectHint : Hint
     {
         private readonly IUIAutomationSelectionItemPattern _selectPattern;

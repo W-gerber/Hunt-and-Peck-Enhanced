@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Windows;
 using UIAutomationClient;
 
 namespace HuntAndPeck.Models
 {
-    /// <summary>
-    /// Represents a Windows UI Automation based expandcollapse hint
-    /// </summary>
+
     internal class UiAutomationExpandCollapseHint : Hint
     {
         private readonly IUIAutomationExpandCollapsePattern _expandCollapsePattern;

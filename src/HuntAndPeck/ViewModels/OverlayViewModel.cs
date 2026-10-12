@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,7 +31,6 @@ namespace HuntAndPeck.ViewModels
                 };
                 _hints.Add(hintViewModel);
 
-                // Build lookup dictionary for faster matching
                 for (int j = 1; j <= labels[i].Length; j++)
                 {
                     var prefix = labels[i].Substring(0, j).ToUpperInvariant();
@@ -44,9 +43,6 @@ namespace HuntAndPeck.ViewModels
             }
         }
 
-        /// <summary>
-        /// Bounds in logical screen coordiantes
-        /// </summary>
         public Rect Bounds
         {
             get
@@ -81,7 +77,7 @@ namespace HuntAndPeck.ViewModels
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    // Reset all hints to inactive
+
                     foreach (var x in Hints)
                     {
                         x.Active = false;
@@ -91,22 +87,20 @@ namespace HuntAndPeck.ViewModels
 
                 var upperValue = value.ToUpperInvariant();
                 
-                // Use lookup dictionary for O(1) access instead of O(n) search
+
                 if (_hintLookup.TryGetValue(upperValue, out var matching))
                 {
-                    // Deactivate all hints first
+
                     foreach (var x in Hints)
                     {
                         x.Active = false;
                     }
 
-                    // Activate only matching hints
                     foreach (var x in matching)
                     {
                         x.Active = true;
                     }
 
-                    // If exactly one match, invoke it
                     if (matching.Count == 1)
                     {
                         matching[0].Hint.Invoke();
@@ -115,7 +109,7 @@ namespace HuntAndPeck.ViewModels
                 }
                 else
                 {
-                    // No matches, deactivate all
+
                     foreach (var x in Hints)
                     {
                         x.Active = false;

@@ -1,11 +1,9 @@
-﻿using System;
+using System;
 using System.Windows.Input;
 
 namespace HuntAndPeck.ViewModels
 {
-    /// <summary>
-    /// Delegate command based on the prism implementation: https://github.com/PrismLibrary/Prism/blob/master/Source/Prism/Commands/DelegateCommand.cs
-    /// </summary>
+
     internal sealed class DelegateCommand : ICommand
     {
         private readonly Action<object> _execute;

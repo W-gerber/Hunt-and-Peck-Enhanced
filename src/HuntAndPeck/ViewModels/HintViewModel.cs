@@ -1,4 +1,4 @@
-﻿using HuntAndPeck.Models;
+using HuntAndPeck.Models;
 using HuntAndPeck.Properties;
 
 namespace HuntAndPeck.ViewModels

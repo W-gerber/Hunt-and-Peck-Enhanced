@@ -1,4 +1,4 @@
-﻿using HuntAndPeck.Properties;
+using HuntAndPeck.Properties;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -26,8 +26,7 @@ namespace HuntAndPeck.ViewModels
 
         private string _fontSize;
         public string FontSize
-        // Assign the font size value to a variable and update it every time user 
-        // changes the option in tray menu
+
         {
             get { return _fontSize; }
             set
@@ -169,7 +168,6 @@ namespace HuntAndPeck.ViewModels
                 }
             }
         }
-
 
         private void OnSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {

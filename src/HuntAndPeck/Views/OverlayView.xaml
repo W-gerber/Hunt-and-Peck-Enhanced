@@ -1,54 +1,63 @@
-﻿<local:ForegroundWindow
+<local:ForegroundWindow
     x:Class="HuntAndPeck.Views.OverlayView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
     xmlns:local="clr-namespace:HuntAndPeck.Views"
     WindowStyle="None"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     AllowsTransparency="True"
     Topmost="True"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="Grayscale"
+    TextOptions.TextHintingMode="Fixed"
     FocusManager.FocusedElement="{Binding ElementName=MatchStringControl}"
     Loaded="OverlayView_OnLoaded"
     PreviewKeyDown="OverlayView_OnPreviewKeyDown">
     <local:ForegroundWindow.Resources>
+        <!-- Shared + frozen so every hint reuses the same brushes instead of
+             allocating its own. -->
+        <LinearGradientBrush x:Key="ActiveBg" StartPoint="0,0" EndPoint="0,1" po:Freeze="True">
+            <GradientStop Color="#FFFEF5" Offset="0"/>
+            <GradientStop Color="#FFE44D" Offset="0.3"/>
+            <GradientStop Color="#F5D033" Offset="0.7"/>
+            <GradientStop Color="#E8C028" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="InactiveBg" StartPoint="0,0" EndPoint="0,1" po:Freeze="True">
+            <GradientStop Color="#F5F3E8" Offset="0"/>
+            <GradientStop Color="#EDDA3F" Offset="0.3"/>
+            <GradientStop Color="#E0C230" Offset="0.7"/>
+            <GradientStop Color="#D4B022" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ActiveBorder" Color="#C9A825" po:Freeze="True" />
+        <SolidColorBrush x:Key="InactiveBorder" Color="#B89920" po:Freeze="True" />
+
         <Style x:Key="HintBorderStyle" TargetType="Border">
-            <Setter Property="Padding" Value="7 3" />
-            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="4 1" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{StaticResource ActiveBg}" />
+            <Setter Property="BorderBrush" Value="{StaticResource ActiveBorder}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Active}" Value="false">
+                    <Setter Property="Background" Value="{StaticResource InactiveBg}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource InactiveBorder}" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </local:ForegroundWindow.Resources>
     <local:ForegroundWindow.Background>
         <SolidColorBrush Color="Transparent" />
     </local:ForegroundWindow.Background>
     <Grid x:Name="layoutGrid">
-        <!-- Typed-filter indicator.
-             This was a bare 50px TextBox with a transparent background and
-             white text, so on any light-coloured window you could not see
-             what you had typed at all. Now a self-contained pill that reads
-             against whatever is behind it. -->
-        <Border HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="0,0,0,54"
-                Background="#F21E1E2E"
-                BorderBrush="#7089B4FA" BorderThickness="1"
-                CornerRadius="9" Padding="15,9">
-            <Border.Effect>
-                <DropShadowEffect Color="#000000" BlurRadius="14" ShadowDepth="2"
-                                  Opacity="0.5" Direction="270" RenderingBias="Quality" />
-            </Border.Effect>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="HINT" FontSize="10" FontWeight="SemiBold"
-                           FontFamily="Segoe UI" Foreground="#7F849C"
-                           VerticalAlignment="Center" Margin="0,1,12,0" />
-                <TextBox x:Name="MatchStringControl"
-                         Text="{Binding MatchString, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
-                         MinWidth="52"
-                         FontFamily="Consolas" FontSize="15" FontWeight="Bold"
-                         Background="Transparent" Foreground="#89B4FA"
-                         CaretBrush="#89B4FA"
-                         BorderThickness="0" Padding="0"
-                         VerticalContentAlignment="Center" />
-            </StackPanel>
-        </Border>
+        <!-- Invisible: only here to receive the typed keys. -->
+        <TextBox x:Name="MatchStringControl"
+                 Text="{Binding MatchString, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
+                 Width="1" Height="1" Opacity="0"
+                 HorizontalAlignment="Left" VerticalAlignment="Top" />
         <ItemsControl ItemsSource="{Binding Hints}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -65,66 +74,15 @@
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <!--<Rectangle Width="{Binding Hint.BoundingRectangle.Width}" Height="{Binding Hint.BoundingRectangle.Height}" Stroke="Red" StrokeDashArray="1 2">
-                            <Rectangle.Fill>
-                                <SolidColorBrush Color="Yellow" Opacity="0.05" />
-                            </Rectangle.Fill>
-                        </Rectangle>-->
-                        <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1 1 0 0" Width="{Binding Hint.BoundingRectangle.Width}" Height="{Binding Hint.BoundingRectangle.Height}">
-                            <Border Padding="4 1" CornerRadius="3" BorderThickness="1">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background">
-                                            <Setter.Value>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                    <GradientStop Color="#FFFEF5" Offset="0"/>
-                                                    <GradientStop Color="#FFE44D" Offset="0.3"/>
-                                                    <GradientStop Color="#F5D033" Offset="0.7"/>
-                                                    <GradientStop Color="#E8C028" Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="BorderBrush">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="#C9A825" />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Active}" Value="false">
-                                                <Setter Property="Background">
-                                                    <Setter.Value>
-                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                            <GradientStop Color="#F5F3E8" Offset="0"/>
-                                                            <GradientStop Color="#EDDA3F" Offset="0.3"/>
-                                                            <GradientStop Color="#E0C230" Offset="0.7"/>
-                                                            <GradientStop Color="#D4B022" Offset="1"/>
-                                                        </LinearGradientBrush>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Setter Property="BorderBrush">
-                                                    <Setter.Value>
-                                                        <SolidColorBrush Color="#B89920" />
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <TextBlock Text="{Binding Label}" FontFamily="{Binding FontFamilyReadValue}" FontWeight="Bold" FontSize="{Binding FontSizeReadValue}" RenderOptions.ClearTypeHint="Enabled" TextOptions.TextRenderingMode="ClearType">
-                                    <TextBlock.Foreground>
-                                        <SolidColorBrush Color="{Binding TextColorReadValue}" />
-                                    </TextBlock.Foreground>
-                                    <TextBlock.Effect>
-                                        <DropShadowEffect Color="#50000000" BlurRadius="0.8" ShadowDepth="0.3" Opacity="0.5" Direction="270" RenderingBias="Quality"/>
-                                    </TextBlock.Effect>
-                                </TextBlock>
-                            </Border>
-                        </Viewbox>
-                    </Grid>
+                    <Border Style="{StaticResource HintBorderStyle}" Margin="1 1 0 0">
+                        <TextBlock Text="{Binding Label}" FontFamily="{Binding FontFamilyReadValue}" FontWeight="Bold" FontSize="{Binding FontSizeReadValue}">
+                            <TextBlock.Foreground>
+                                <SolidColorBrush Color="{Binding TextColorReadValue}" />
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                    </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        </Grid>
+    </Grid>
 </local:ForegroundWindow>
-

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using HuntAndPeck.Models;
 
 namespace HuntAndPeck.Services.Interfaces
