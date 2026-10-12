@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Windows;
 using UIAutomationClient;
 
 namespace HuntAndPeck.Models
 {
-    /// <summary>
-    /// Represents a Windows UI Automation based focus hint
-    /// </summary>
+
     internal class UiAutomationFocusHint : Hint
     {
         private readonly IUIAutomationElement _automationElement;

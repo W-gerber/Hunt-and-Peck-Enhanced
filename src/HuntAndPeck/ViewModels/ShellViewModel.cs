@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using HuntAndPeck.NativeMethods;
 using HuntAndPeck.Services.Interfaces;
@@ -32,7 +32,6 @@ namespace HuntAndPeck.ViewModels
             _hintProviderService = hintProviderService;
             _debugHintProviderService = debugHintProviderService;
 
-            // Read main hotkey from settings
             var mainKey = (Keys)Enum.Parse(typeof(Keys), Properties.Settings.Default.MainHotKeyKey);
             var mainModifier = (KeyModifier)Enum.Parse(typeof(KeyModifier), Properties.Settings.Default.MainHotKeyModifier);
             
@@ -42,7 +41,6 @@ namespace HuntAndPeck.ViewModels
                 Modifier = mainModifier
             };
 
-            // Read taskbar hotkey from settings
             var taskbarKey = (Keys)Enum.Parse(typeof(Keys), Properties.Settings.Default.TaskbarHotKeyKey);
             var taskbarModifier = (KeyModifier)Enum.Parse(typeof(KeyModifier), Properties.Settings.Default.TaskbarHotKeyModifier);
             

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -12,14 +12,11 @@ namespace HuntAndPeck.Models
             SupportedPatterns = supportedPatterns;
         }
 
-        /// <summary>
-        /// List of supported UI Automation patterns
-        /// </summary>
         public IList<string> SupportedPatterns { get; set; }
 
         public override void Invoke()
         {
-            // Do nothing
+
         }
     }
 }
