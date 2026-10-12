@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Windows;
 using UIAutomationClient;
 
 namespace HuntAndPeck.Models
 {
-    /// <summary>
-    /// Represents a Windows UI Automation based invoke hint
-    /// </summary>
+
     internal class UiAutomationInvokeHint : Hint
     {
         private readonly IUIAutomationInvokePattern _invokePattern;

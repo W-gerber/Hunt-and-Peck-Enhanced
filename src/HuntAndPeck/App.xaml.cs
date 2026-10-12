@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using HuntAndPeck.ViewModels;
 using System.Linq;
 using HuntAndPeck.Services;
@@ -7,9 +7,7 @@ using HuntAndPeck.NativeMethods;
 
 namespace HuntAndPeck
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
+
     public partial class App : Application
     {
         private readonly SingleLaunchMutex _singleLaunchMutex = new SingleLaunchMutex();
@@ -49,7 +47,7 @@ namespace HuntAndPeck
         {
             if (e.Args.Contains("/hint"))
             {
-                // support headless mode
+
                 var session = _hintProviderService.EnumHints();
                 var overlayWindow = new OverlayView()
                 {
@@ -59,7 +57,7 @@ namespace HuntAndPeck
             }
             else if (e.Args.Contains("/tray"))
             {
-                // support headless tray mode
+
                 var taskbarHWnd = User32.FindWindow("Shell_traywnd", "");
                 var session = _hintProviderService.EnumHints(taskbarHWnd);
                 var overlayWindow = new OverlayView()
@@ -70,14 +68,13 @@ namespace HuntAndPeck
             }
             else
             {
-                // Prevent multiple startup in non-headless mode
+
                 if (_singleLaunchMutex.AlreadyRunning)
                 {
                     Current.Shutdown();
                     return;
                 }
 
-                // Create this as late as possible as it has a window
                 _keyListenerService = new KeyListenerService();
 
                 var shellViewModel = new ShellViewModel(

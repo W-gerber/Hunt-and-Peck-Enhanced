@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace HuntAndPeck
@@ -16,7 +16,7 @@ namespace HuntAndPeck
             }
             catch (AbandonedMutexException)
             {
-                // This will happen if the mutex isn't disposed properly, e.g. during a crash
+
                 _aquiredHandle = true;
             }
         }

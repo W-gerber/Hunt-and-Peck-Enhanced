@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UIAutomationClient;
 
 namespace HuntAndPeck.Services
 {
     class UiAutomationPatternIds
     {
-        /// <summary>
-        /// All possible patterns (excluding custom patterns) -> debug description
-        /// </summary>
+
         private static readonly Dictionary<int, string> s_patternNames = new Dictionary<int, string>()
         {
             {UIA_PatternIds.UIA_InvokePatternId, "Invoke"},
