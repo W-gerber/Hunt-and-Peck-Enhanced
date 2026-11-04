@@ -14,6 +14,7 @@ namespace HuntAndPeck.ViewModels
         private readonly IHintLabelService _hintLabelService;
         private readonly IHintProviderService _hintProviderService;
         private readonly IDebugHintProviderService _debugHintProviderService;
+        private readonly IKeyListenerService _keyListener;
 
         public ShellViewModel(
             Action<OverlayViewModel> showOverlay,
@@ -28,42 +29,51 @@ namespace HuntAndPeck.ViewModels
             _showDebugOverlay = showDebugOverlay;
             _showOptions = showOptions;
             _hintLabelService = hintLabelService;
-            var keyListener1 = keyListener;
+            _keyListener = keyListener;
             _hintProviderService = hintProviderService;
             _debugHintProviderService = debugHintProviderService;
 
-            var mainKey = (Keys)Enum.Parse(typeof(Keys), Properties.Settings.Default.MainHotKeyKey);
-            var mainModifier = (KeyModifier)Enum.Parse(typeof(KeyModifier), Properties.Settings.Default.MainHotKeyModifier);
-            
-            keyListener1.HotKey = new HotKey
+            ApplyHotKeys();
+            // Options writes straight to Settings, so re-registering here makes
+            // hotkey changes take effect without restarting.
+            Properties.Settings.Default.PropertyChanged += (s, e) =>
             {
-                Keys = mainKey,
-                Modifier = mainModifier
-            };
-
-            var taskbarKey = (Keys)Enum.Parse(typeof(Keys), Properties.Settings.Default.TaskbarHotKeyKey);
-            var taskbarModifier = (KeyModifier)Enum.Parse(typeof(KeyModifier), Properties.Settings.Default.TaskbarHotKeyModifier);
-            
-            keyListener1.TaskbarHotKey = new HotKey
-            {
-                Keys = taskbarKey,
-                Modifier = taskbarModifier
+                if (e.PropertyName.Contains("HotKey"))
+                {
+                    ApplyHotKeys();
+                }
             };
 
 #if DEBUG
-            keyListener1.DebugHotKey = new HotKey
+            keyListener.DebugHotKey = new HotKey
             {
                 Keys = Keys.OemSemicolon,
                 Modifier = KeyModifier.Alt | KeyModifier.Shift
             };
 #endif
 
-            keyListener1.OnHotKeyActivated += _keyListener_OnHotKeyActivated;
-            keyListener1.OnTaskbarHotKeyActivated += _keyListener_OnTaskbarHotKeyActivated;
-            keyListener1.OnDebugHotKeyActivated += _keyListener_OnDebugHotKeyActivated;
+            keyListener.OnHotKeyActivated += _keyListener_OnHotKeyActivated;
+            keyListener.OnTaskbarHotKeyActivated += _keyListener_OnTaskbarHotKeyActivated;
+            keyListener.OnDebugHotKeyActivated += _keyListener_OnDebugHotKeyActivated;
 
             ShowOptionsCommand = new DelegateCommand(ShowOptions);
             ExitCommand = new DelegateCommand(Exit);
+        }
+
+        private static HotKey ReadHotKey(string key, string modifier)
+        {
+            return new HotKey
+            {
+                Keys = (Keys)Enum.Parse(typeof(Keys), key),
+                Modifier = (KeyModifier)Enum.Parse(typeof(KeyModifier), modifier)
+            };
+        }
+
+        private void ApplyHotKeys()
+        {
+            var settings = Properties.Settings.Default;
+            _keyListener.HotKey = ReadHotKey(settings.MainHotKeyKey, settings.MainHotKeyModifier);
+            _keyListener.TaskbarHotKey = ReadHotKey(settings.TaskbarHotKeyKey, settings.TaskbarHotKeyModifier);
         }
 
         public DelegateCommand ShowOptionsCommand { get; }
@@ -72,7 +82,7 @@ namespace HuntAndPeck.ViewModels
         private void _keyListener_OnHotKeyActivated(object sender, EventArgs e)
         {
             var session = _hintProviderService.EnumHints();
-            if (session != null)
+            if (session != null && session.Hints.Count > 0)
             {
                 var vm = new OverlayViewModel(session, _hintLabelService);
                 _showOverlay(vm);
@@ -83,7 +93,7 @@ namespace HuntAndPeck.ViewModels
         {
             var taskbarHWnd = User32.FindWindow("Shell_traywnd", "");
             var session = _hintProviderService.EnumHints(taskbarHWnd);
-            if (session != null)
+            if (session != null && session.Hints.Count > 0)
             {
                 var vm = new OverlayViewModel(session, _hintLabelService);
                 _showOverlay(vm);
@@ -107,7 +117,7 @@ namespace HuntAndPeck.ViewModels
 
         public void ShowOptions()
         {
-            var vm = new OptionsViewModel();
+            var vm = new OptionsViewModel(_keyListener);
             _showOptions(vm);
         }
     }

@@ -81,10 +81,15 @@ namespace HuntAndPeck.Services
             User32.GetWindowRect(hWnd, ref rawWindowBounds);
             Rect windowBounds = rawWindowBounds;
 
-            foreach (var element in EnumElements(hWnd))
+            // Stacked elements (a button and its inner text, say) often share one
+            // rect; one hint per rect keeps labels short and stops them piling up.
+            var seen = new HashSet<Rect>();
+            var elements = FindElements(hWnd);
+            for (var i = 0; i < (elements?.Length ?? 0); ++i)
             {
                 try
                 {
+                    var element = elements.GetElement(i);
                     var r = element.CachedBoundingRectangle;
                     if (r.right <= r.left || r.bottom <= r.top)
                     {
@@ -92,13 +97,15 @@ namespace HuntAndPeck.Services
                     }
 
                     var niceRect = new Rect(new Point(r.left, r.top), new Point(r.right, r.bottom));
-                    if (niceRect.PhysicalToLogicalRect(hWnd).IsEmpty)
+                    // Scrolled-away content is often not flagged offscreen; its hints
+                    // would land outside the overlay and still eat the short labels.
+                    if (!niceRect.IntersectsWith(windowBounds) || niceRect.PhysicalToLogicalRect(hWnd).IsEmpty)
                     {
                         continue;
                     }
 
                     var hint = hintFactory(hWnd, niceRect.ScreenToWindowCoordinates(windowBounds), element);
-                    if (hint != null)
+                    if (hint != null && seen.Add(niceRect))
                     {
                         result.Add(hint);
                     }
@@ -116,23 +123,23 @@ namespace HuntAndPeck.Services
             };
         }
 
-        private IEnumerable<IUIAutomationElement> EnumElements(IntPtr hWnd)
+        private IUIAutomationElementArray FindElements(IntPtr hWnd)
         {
             if (!User32.IsWindow(hWnd))
             {
-                yield break;
+                return null;
             }
 
-            var elementArray = _automation.ElementFromHandle(hWnd)
-                .FindAllBuildCache(TreeScope.TreeScope_Descendants, _condition, _cacheRequest);
-            if (elementArray == null)
+            try
             {
-                yield break;
+                return _automation.ElementFromHandle(hWnd)
+                    .FindAllBuildCache(TreeScope.TreeScope_Descendants, _condition, _cacheRequest);
             }
-
-            for (var i = 0; i < elementArray.Length; ++i)
+            catch (Exception)
             {
-                yield return elementArray.GetElement(i);
+                // Elevated (admin) or hung windows refuse UI Automation. This runs
+                // inside the hotkey handler, so letting it escape killed the app.
+                return null;
             }
         }
 

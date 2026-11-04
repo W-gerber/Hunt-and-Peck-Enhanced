@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:models="clr-namespace:HuntAndPeck.Models"
-        Title="Vimium Desktop — Options"
-        Icon="/Resources/vimium-desktop.ico"
-        Height="600" Width="800"
-        MinHeight="520" MinWidth="720"
+        xmlns:views="clr-namespace:HuntAndPeck.Views"
+        Title="Hunt and Peck Enhanced"
+        Icon="/Resources/originalbird.ico"
+        Width="780" Height="560"
+        ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
         Background="#1E1E2E"
         FontFamily="Segoe UI"
@@ -16,73 +17,30 @@
         SnapsToDevicePixels="True">
 
     <Window.Resources>
-        <!-- ==================== Palette ====================
-             Catppuccin Mocha. Chosen to match the GlazeWM border colours
-             (#89B4FA focused / #45475A unfocused) so the whole desktop
-             reads as one system rather than three unrelated apps. -->
+        <!-- Catppuccin Mocha, matching the GlazeWM / tacky-borders desktop. -->
         <SolidColorBrush x:Key="Base"     Color="#1E1E2E" />
         <SolidColorBrush x:Key="Mantle"   Color="#181825" />
         <SolidColorBrush x:Key="Crust"    Color="#11111B" />
         <SolidColorBrush x:Key="Surface0" Color="#313244" />
         <SolidColorBrush x:Key="Surface1" Color="#45475A" />
+        <SolidColorBrush x:Key="Surface2" Color="#585B70" />
         <SolidColorBrush x:Key="Text"     Color="#CDD6F4" />
         <SolidColorBrush x:Key="Subtext"  Color="#A6ADC8" />
-        <SolidColorBrush x:Key="Muted"    Color="#6C7086" />
+        <SolidColorBrush x:Key="Muted"    Color="#7F849C" />
         <SolidColorBrush x:Key="Accent"   Color="#89B4FA" />
+        <SolidColorBrush x:Key="Danger"   Color="#F38BA8" />
 
-        <!-- ==================== Data ====================
-             The original file hard-coded 27 ComboBoxItems for the hotkey
-             key list, then repeated the identical 27 for the second hotkey,
-             plus 33 more for font size. Same values, four copies, ~700 lines
-             of XAML. Declared once here and bound instead. -->
-        <x:Array x:Key="KeyList" Type="sys:String">
-            <sys:String>A</sys:String><sys:String>B</sys:String><sys:String>C</sys:String>
-            <sys:String>D</sys:String><sys:String>E</sys:String><sys:String>F</sys:String>
-            <sys:String>G</sys:String><sys:String>H</sys:String><sys:String>I</sys:String>
-            <sys:String>J</sys:String><sys:String>K</sys:String><sys:String>L</sys:String>
-            <sys:String>M</sys:String><sys:String>N</sys:String><sys:String>O</sys:String>
-            <sys:String>P</sys:String><sys:String>Q</sys:String><sys:String>R</sys:String>
-            <sys:String>S</sys:String><sys:String>T</sys:String><sys:String>U</sys:String>
-            <sys:String>V</sys:String><sys:String>W</sys:String><sys:String>X</sys:String>
-            <sys:String>Y</sys:String><sys:String>Z</sys:String>
-            <sys:String>OemSemicolon</sys:String>
-        </x:Array>
+        <views:HintBrushConverter x:Key="HintBrush" />
 
-        <x:Array x:Key="ModifierList" Type="sys:String">
-            <sys:String>Alt</sys:String>
-            <sys:String>Control</sys:String>
-            <sys:String>Shift</sys:String>
-        </x:Array>
-
+        <!-- ==================== Data ==================== -->
         <x:Array x:Key="FontSizeList" Type="sys:String">
-            <sys:String>8</sys:String><sys:String>8.5</sys:String><sys:String>9</sys:String><sys:String>9.5</sys:String>
-            <sys:String>10</sys:String><sys:String>10.5</sys:String><sys:String>11</sys:String><sys:String>11.5</sys:String>
-            <sys:String>12</sys:String><sys:String>12.5</sys:String><sys:String>13</sys:String><sys:String>13.5</sys:String>
-            <sys:String>14</sys:String><sys:String>14.5</sys:String><sys:String>15</sys:String><sys:String>15.5</sys:String>
-            <sys:String>16</sys:String><sys:String>16.5</sys:String><sys:String>17</sys:String><sys:String>17.5</sys:String>
-            <sys:String>18</sys:String><sys:String>18.5</sys:String><sys:String>19</sys:String><sys:String>19.5</sys:String>
-            <sys:String>20</sys:String><sys:String>20.5</sys:String><sys:String>21</sys:String><sys:String>21.5</sys:String>
-            <sys:String>22</sys:String><sys:String>22.5</sys:String><sys:String>23</sys:String><sys:String>23.5</sys:String>
-            <sys:String>24</sys:String>
+            <sys:String>9</sys:String><sys:String>10</sys:String><sys:String>11</sys:String>
+            <sys:String>12</sys:String><sys:String>13</sys:String><sys:String>14</sys:String>
+            <sys:String>15</sys:String><sys:String>16</sys:String><sys:String>18</sys:String>
+            <sys:String>20</sys:String><sys:String>22</sys:String><sys:String>24</sys:String>
         </x:Array>
 
-        <x:Array x:Key="FontFamilyList" Type="sys:String">
-            <sys:String>Arial</sys:String>
-            <sys:String>Calibri</sys:String>
-            <sys:String>Cascadia Mono</sys:String>
-            <sys:String>Consolas</sys:String>
-            <sys:String>Courier New</sys:String>
-            <sys:String>Georgia</sys:String>
-            <sys:String>Helvetica</sys:String>
-            <sys:String>JetBrains Mono</sys:String>
-            <sys:String>Segoe UI</sys:String>
-            <sys:String>Tahoma</sys:String>
-            <sys:String>Times New Roman</sys:String>
-            <sys:String>Verdana</sys:String>
-        </x:Array>
-
-        <!-- Colour choices. Values must stay byte-identical to the old
-             ComboBoxItem Tags so previously saved settings still resolve. -->
+        <!-- Values must stay byte-identical so previously saved settings resolve. -->
         <x:Array x:Key="ActiveColors" Type="models:ColorOption">
             <models:ColorOption Name="Gold"        Value="#F9CD33" Note="default" />
             <models:ColorOption Name="Yellow"      Value="Yellow" />
@@ -115,23 +73,152 @@
             <models:ColorOption Name="Brown"     Value="Brown" />
         </x:Array>
 
-        <!-- One template drives both the drop-down row and the closed
-             selection box, which is what stops the picker rendering blank. -->
         <DataTemplate x:Key="ColorItemTemplate" DataType="{x:Type models:ColorOption}">
             <StackPanel Orientation="Horizontal">
-                <Border Width="18" Height="18" CornerRadius="4"
+                <Border Width="16" Height="16" CornerRadius="4"
                         Background="{Binding Value}"
                         BorderBrush="#55FFFFFF" BorderThickness="1"
                         Margin="0,0,10,0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding Note}" FontSize="11" Margin="8,0,0,0"
-                           Foreground="#6C7086" VerticalAlignment="Center" />
+                           Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
             </StackPanel>
         </DataTemplate>
 
-        <!-- ==================== Scroll bar ====================
-             The stock WPF scroll bar is light grey with arrow buttons and
-             looked pasted-on against a dark window. -->
+        <!-- One hint label, drawn with the same brushes as the real overlay. -->
+        <DataTemplate x:Key="PreviewHint">
+            <Border Background="{Binding Color, Converter={StaticResource HintBrush}}"
+                    BorderBrush="{Binding Color, Converter={StaticResource HintBrush}, ConverterParameter=border}"
+                    CornerRadius="3" Padding="4,1" BorderThickness="1" Margin="9,0">
+                <TextBlock Text="{Binding Label}" FontWeight="Bold"
+                           FontFamily="{Binding DataContext.FontFamily, RelativeSource={RelativeSource AncestorType=Window}}"
+                           FontSize="{Binding DataContext.FontSize, RelativeSource={RelativeSource AncestorType=Window}}"
+                           Foreground="{Binding DataContext.TextColor, RelativeSource={RelativeSource AncestorType=Window}}" />
+            </Border>
+        </DataTemplate>
+
+        <!-- ==================== Typography ==================== -->
+        <Style x:Key="PageTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource Text}" />
+        </Style>
+
+        <Style x:Key="PageSubtitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{StaticResource Muted}" />
+            <Setter Property="Margin" Value="0,4,0,22" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource Muted}" />
+            <Setter Property="Margin" Value="2,0,0,8" />
+        </Style>
+
+        <Style x:Key="SettingName" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13.5" />
+            <Setter Property="Foreground" Value="{StaticResource Text}" />
+        </Style>
+
+        <Style x:Key="SettingHelp" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource Muted}" />
+            <Setter Property="Margin" Value="0,3,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{StaticResource Subtext}" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+
+        <Style x:Key="ErrorText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource Danger}" />
+            <Setter Property="Margin" Value="0,8,0,0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Style.Triggers>
+                <Trigger Property="Text" Value="">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="#232334" />
+            <Setter Property="BorderBrush" Value="{StaticResource Surface0}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="20,18" />
+            <Setter Property="Margin" Value="0,0,0,20" />
+        </Style>
+
+        <Style x:Key="Divider" TargetType="Border">
+            <Setter Property="Height" Value="1" />
+            <Setter Property="Background" Value="{StaticResource Surface0}" />
+            <Setter Property="Margin" Value="-20,16" />
+        </Style>
+
+        <!-- ==================== Shortcut box ====================
+             Click it, then press the new combo. Shows the current shortcut
+             as key caps; shows a prompt while it is listening. -->
+        <DataTemplate x:Key="KeyCap">
+            <Border Background="{StaticResource Surface1}"
+                    BorderBrush="{StaticResource Surface2}" BorderThickness="0,0,0,2"
+                    CornerRadius="4" Padding="9,3" Margin="3,0">
+                <TextBlock Text="{Binding}" FontSize="12.5" FontWeight="SemiBold"
+                           Foreground="{StaticResource Text}" />
+            </Border>
+        </DataTemplate>
+
+        <ItemsPanelTemplate x:Key="Row">
+            <StackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+
+        <Style x:Key="HotKeyBox" TargetType="Button">
+            <Setter Property="Width" Value="190" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="ToolTip" Value="Click, then press the new shortcut. Esc cancels." />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{StaticResource Surface0}"
+                                BorderBrush="{StaticResource Surface1}"
+                                BorderThickness="1" CornerRadius="6">
+                            <Grid>
+                                <ContentPresenter x:Name="Value"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock x:Name="Prompt" Text="Press a shortcut…"
+                                           FontSize="12.5" Foreground="{StaticResource Accent}"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Surface2}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                <Setter TargetName="Bd" Property="Background" Value="#2A2D45" />
+                                <Setter TargetName="Value" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="Prompt" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ==================== Scroll bar ==================== -->
         <Style TargetType="ScrollBar">
             <Setter Property="Width" Value="10" />
             <Setter Property="Background" Value="Transparent" />
@@ -144,10 +231,7 @@
                                     <Thumb>
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="Thumb">
-                                                <Border x:Name="T"
-                                                        Background="#3A3A4E"
-                                                        CornerRadius="4"
-                                                        Margin="3,0" />
+                                                <Border x:Name="T" Background="#3A3A4E" CornerRadius="4" Margin="3,0" />
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter TargetName="T" Property="Background" Value="#55586E" />
@@ -157,24 +241,6 @@
                                         </Thumb.Template>
                                     </Thumb>
                                 </Track.Thumb>
-                                <Track.IncreaseRepeatButton>
-                                    <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0">
-                                        <RepeatButton.Template>
-                                            <ControlTemplate TargetType="RepeatButton">
-                                                <Border Background="Transparent" />
-                                            </ControlTemplate>
-                                        </RepeatButton.Template>
-                                    </RepeatButton>
-                                </Track.IncreaseRepeatButton>
-                                <Track.DecreaseRepeatButton>
-                                    <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0">
-                                        <RepeatButton.Template>
-                                            <ControlTemplate TargetType="RepeatButton">
-                                                <Border Background="Transparent" />
-                                            </ControlTemplate>
-                                        </RepeatButton.Template>
-                                    </RepeatButton>
-                                </Track.DecreaseRepeatButton>
                             </Track>
                         </Grid>
                     </ControlTemplate>
@@ -182,66 +248,15 @@
             </Setter>
         </Style>
 
-        <!-- ==================== Typography ==================== -->
-        <Style x:Key="PageTitle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="21" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource Text}" />
-        </Style>
-
-        <Style x:Key="PageSubtitle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12.5" />
-            <Setter Property="Foreground" Value="{StaticResource Muted}" />
-            <Setter Property="Margin" Value="0,3,0,0" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-        </Style>
-
-        <Style x:Key="SectionLabel" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="10.5" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource Muted}" />
-            <Setter Property="Margin" Value="0,0,0,10" />
-        </Style>
-
-        <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12.5" />
-            <Setter Property="Foreground" Value="{StaticResource Subtext}" />
-            <Setter Property="Margin" Value="0,0,0,6" />
-        </Style>
-
-        <Style x:Key="HelpText" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11.5" />
-            <Setter Property="Foreground" Value="{StaticResource Muted}" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="LineHeight" Value="17" />
-        </Style>
-
-        <!-- Card container for grouping related settings -->
-        <Style x:Key="Card" TargetType="Border">
-            <Setter Property="Background" Value="#22222F" />
-            <Setter Property="BorderBrush" Value="{StaticResource Surface0}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="Padding" Value="20" />
-            <Setter Property="Margin" Value="0,0,0,18" />
-        </Style>
-
-        <!-- ==================== ComboBox ====================
-             Full retemplate. The stock WPF ComboBox still renders the
-             Aero-era gradient chrome, which is most of why this window
-             looked dated. -->
+        <!-- ==================== ComboBox ==================== -->
         <Style TargetType="ComboBoxItem">
             <Setter Property="Foreground" Value="{StaticResource Text}" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBoxItem">
-                        <Border x:Name="Bd"
-                                Background="Transparent"
-                                CornerRadius="5"
-                                Margin="4,1"
-                                Padding="10,7"
-                                SnapsToDevicePixels="True">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="5"
+                                Margin="4,1" Padding="10,7" SnapsToDevicePixels="True">
                             <ContentPresenter VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
@@ -263,6 +278,7 @@
             <Setter Property="Foreground" Value="{StaticResource Text}" />
             <Setter Property="Background" Value="{StaticResource Surface0}" />
             <Setter Property="BorderBrush" Value="{StaticResource Surface1}" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="SnapsToDevicePixels" Value="True" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -271,12 +287,8 @@
                             <Border x:Name="Bd"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="6"
-                                    SnapsToDevicePixels="True" />
-
-                            <ToggleButton Focusable="False"
-                                          ClickMode="Press"
+                                    BorderThickness="1" CornerRadius="6" />
+                            <ToggleButton Focusable="False" ClickMode="Press" Cursor="Hand"
                                           IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
@@ -284,34 +296,22 @@
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
-
                             <ContentPresenter IsHitTestVisible="False"
                                               Content="{TemplateBinding SelectionBoxItem}"
                                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                               Margin="12,0,34,0"
-                                              VerticalAlignment="Center"
-                                              HorizontalAlignment="Left" />
-
+                                              VerticalAlignment="Center" HorizontalAlignment="Left" />
                             <Path x:Name="Arrow"
-                                  HorizontalAlignment="Right" VerticalAlignment="Center"
-                                  Margin="0,0,14,0"
+                                  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0"
                                   Data="M 0,0 L 5,5 L 10,0"
-                                  Stroke="{StaticResource Subtext}"
-                                  StrokeThickness="1.5"
-                                  StrokeStartLineCap="Round"
-                                  StrokeEndLineCap="Round"
+                                  Stroke="{StaticResource Subtext}" StrokeThickness="1.5"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                                   IsHitTestVisible="False" />
-
-                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}"
-                                   Placement="Bottom"
-                                   AllowsTransparency="True"
-                                   Focusable="False"
-                                   PopupAnimation="Fade">
+                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom"
+                                   AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                                 <Border Background="{StaticResource Mantle}"
-                                        BorderBrush="{StaticResource Surface1}"
-                                        BorderThickness="1"
-                                        CornerRadius="6"
-                                        Margin="0,4,0,0"
+                                        BorderBrush="{StaticResource Surface1}" BorderThickness="1"
+                                        CornerRadius="6" Margin="0,4,0,0"
                                         MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                         MaxHeight="280">
                                     <ScrollViewer>
@@ -320,9 +320,11 @@
                                 </Border>
                             </Popup>
                         </Grid>
-
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Surface2}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
                                 <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}" />
                             </Trigger>
                             <Trigger Property="IsDropDownOpen" Value="True">
@@ -338,31 +340,24 @@
         <!-- ==================== Sidebar navigation ==================== -->
         <Style TargetType="TabItem">
             <Setter Property="Foreground" Value="{StaticResource Subtext}" />
-            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontSize" Value="13.5" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
-                        <Border x:Name="Bd"
-                                Background="Transparent"
-                                CornerRadius="6"
-                                Margin="10,1"
-                                Padding="12,9"
-                                SnapsToDevicePixels="True">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="6"
+                                Margin="12,2" Padding="12,9" SnapsToDevicePixels="True">
                             <Grid>
-                                <Rectangle x:Name="Ind"
-                                           Width="3" RadiusX="1.5" RadiusY="1.5"
-                                           HorizontalAlignment="Left"
-                                           Margin="-8,3,0,3"
-                                           Fill="{StaticResource Accent}"
-                                           Visibility="Collapsed" />
-                                <ContentPresenter ContentSource="Header"
-                                                  VerticalAlignment="Center"
-                                                  Margin="8,0,0,0" />
+                                <Rectangle x:Name="Ind" Width="3" RadiusX="1.5" RadiusY="1.5"
+                                           HorizontalAlignment="Left" Margin="-8,3,0,3"
+                                           Fill="{StaticResource Accent}" Visibility="Collapsed" />
+                                <ContentPresenter ContentSource="Header" VerticalAlignment="Center" Margin="6,0,0,0" />
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="#252536" />
+                                <Setter TargetName="Bd" Property="Background" Value="#24243A" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="{StaticResource Surface0}" />
@@ -377,33 +372,36 @@
         </Style>
 
         <Style TargetType="TabControl">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabControl">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="196" />
+                                <ColumnDefinition Width="210" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0" Background="{StaticResource Mantle}">
+                            <Border Grid.Column="0" Background="{StaticResource Mantle}"
+                                    BorderBrush="{StaticResource Surface0}" BorderThickness="0,0,1,0">
                                 <DockPanel>
-                                    <StackPanel DockPanel.Dock="Top" Margin="22,26,22,22">
-                                        <TextBlock Text="Vimium Desktop"
-                                                   FontSize="14.5" FontWeight="SemiBold"
-                                                   Foreground="{StaticResource Text}" />
-                                        <TextBlock Text="Keyboard navigation"
-                                                   FontSize="11.5"
-                                                   Foreground="{StaticResource Muted}"
-                                                   Margin="0,2,0,0" />
+                                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="22,22,16,24">
+                                        <Image Source="/Resources/originalbird.ico" Width="34" Height="34"
+                                               RenderOptions.BitmapScalingMode="HighQuality" />
+                                        <StackPanel Margin="11,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Text="Hunt and Peck" FontSize="14.5" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource Text}" />
+                                            <TextBlock Text="Enhanced" FontSize="12" Foreground="{StaticResource Accent}" />
+                                        </StackPanel>
                                     </StackPanel>
+                                    <TextBlock DockPanel.Dock="Bottom" Margin="24,0,16,20"
+                                               FontSize="11" Foreground="{StaticResource Muted}" TextWrapping="Wrap"
+                                               Text="Based on Hunt and Peck by Zachary Sims" />
                                     <StackPanel IsItemsHost="True" VerticalAlignment="Top" />
                                 </DockPanel>
                             </Border>
 
-                            <Border Grid.Column="1" Background="{StaticResource Base}">
-                                <ContentPresenter ContentSource="SelectedContent" />
-                            </Border>
+                            <ContentPresenter Grid.Column="1" ContentSource="SelectedContent" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -411,210 +409,132 @@
         </Style>
     </Window.Resources>
 
-    <TabControl>
+    <TabControl x:Name="Tabs">
 
-        <!-- ==================================================== KEYBOARD -->
-        <TabItem Header="Keyboard">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="34,30,34,30">
+        <!-- ================================================== SHORTCUTS -->
+        <TabItem Header="Shortcuts">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="34,28,34,10">
                 <StackPanel>
-                    <TextBlock Text="Keyboard" Style="{StaticResource PageTitle}" />
+                    <TextBlock Text="Shortcuts" Style="{StaticResource PageTitle}" />
                     <TextBlock Style="{StaticResource PageSubtitle}"
-                               Text="Global shortcuts that bring up the hint overlay." />
-
-                    <Border Style="{StaticResource Card}" Margin="0,24,0,18">
-                        <StackPanel>
-                            <TextBlock Text="MAIN HOTKEY" Style="{StaticResource SectionLabel}" />
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="16" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Key" Style="{StaticResource FieldLabel}" />
-                                    <ComboBox ItemsSource="{StaticResource KeyList}"
-                                              SelectedValue="{Binding MainHotKeyKey}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="2">
-                                    <TextBlock Text="Modifier" Style="{StaticResource FieldLabel}" />
-                                    <ComboBox ItemsSource="{StaticResource ModifierList}"
-                                              SelectedValue="{Binding MainHotKeyModifier}" />
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
+                               Text="Click a shortcut, then press the keys you want. Esc cancels." />
 
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
-                            <TextBlock Text="TASKBAR / TRAY HOTKEY" Style="{StaticResource SectionLabel}" />
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="16" />
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Key" Style="{StaticResource FieldLabel}" />
-                                    <ComboBox ItemsSource="{StaticResource KeyList}"
-                                              SelectedValue="{Binding TaskbarHotKeyKey}" />
+                                <StackPanel VerticalAlignment="Center" Margin="0,0,20,0">
+                                    <TextBlock Text="Show hints" Style="{StaticResource SettingName}" />
+                                    <TextBlock Text="Labels everything you can click in the active window."
+                                               Style="{StaticResource SettingHelp}" />
                                 </StackPanel>
-                                <StackPanel Grid.Column="2">
-                                    <TextBlock Text="Modifier" Style="{StaticResource FieldLabel}" />
-                                    <ComboBox ItemsSource="{StaticResource ModifierList}"
-                                              SelectedValue="{Binding TaskbarHotKeyModifier}" />
-                                </StackPanel>
+                                <Button Grid.Column="1" Tag="Main" Style="{StaticResource HotKeyBox}"
+                                        PreviewKeyDown="HotKeyBox_OnPreviewKeyDown"
+                                        GotKeyboardFocus="HotKeyBox_OnGotKeyboardFocus"
+                                        LostKeyboardFocus="HotKeyBox_OnLostKeyboardFocus">
+                                    <ItemsControl ItemsSource="{Binding MainHotKeyParts}"
+                                                  ItemTemplate="{StaticResource KeyCap}"
+                                                  ItemsPanel="{StaticResource Row}" />
+                                </Button>
                             </Grid>
-                        </StackPanel>
-                    </Border>
+                            <TextBlock Text="{Binding MainHotKeyError}" Style="{StaticResource ErrorText}" />
 
-                    <Border Background="#2A2438" BorderBrush="#45395E" BorderThickness="1"
-                            CornerRadius="8" Padding="16,14">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="!" FontWeight="Bold" FontSize="13"
-                                       Foreground="#F9E2AF" Margin="0,0,12,0"
-                                       VerticalAlignment="Top" />
-                            <TextBlock Style="{StaticResource HelpText}" MaxWidth="420"
-                                       Text="Hotkey changes are saved immediately, but Vimium Desktop must be restarted before they take effect." />
+                            <Border Style="{StaticResource Divider}" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center" Margin="0,0,20,0">
+                                    <TextBlock Text="Show taskbar hints" Style="{StaticResource SettingName}" />
+                                    <TextBlock Text="Labels the taskbar and the notification area."
+                                               Style="{StaticResource SettingHelp}" />
+                                </StackPanel>
+                                <Button Grid.Column="1" Tag="Taskbar" Style="{StaticResource HotKeyBox}"
+                                        PreviewKeyDown="HotKeyBox_OnPreviewKeyDown"
+                                        GotKeyboardFocus="HotKeyBox_OnGotKeyboardFocus"
+                                        LostKeyboardFocus="HotKeyBox_OnLostKeyboardFocus">
+                                    <ItemsControl ItemsSource="{Binding TaskbarHotKeyParts}"
+                                                  ItemTemplate="{StaticResource KeyCap}"
+                                                  ItemsPanel="{StaticResource Row}" />
+                                </Button>
+                            </Grid>
+                            <TextBlock Text="{Binding TaskbarHotKeyError}" Style="{StaticResource ErrorText}" />
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
 
-        <!-- ================================================== APPEARANCE -->
+        <!-- ================================================= APPEARANCE -->
         <TabItem Header="Appearance">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="34,30,34,30">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="34,28,34,10">
                 <StackPanel>
                     <TextBlock Text="Appearance" Style="{StaticResource PageTitle}" />
                     <TextBlock Style="{StaticResource PageSubtitle}"
-                               Text="How the hint labels are drawn over your windows." />
+                               Text="How hint labels look over your windows. Changes show on the next hint." />
 
-                    <!-- Live preview. The original window had a line of grey text
-                         reading "Select a color from the dropdown to see a preview"
-                         but no preview was ever rendered. This is that preview:
-                         every control below updates it as you change it. -->
-                    <Border Background="{StaticResource Crust}"
-                            BorderBrush="{StaticResource Surface0}"
-                            BorderThickness="1" CornerRadius="8"
-                            Padding="0" Margin="0,24,0,18">
-                        <StackPanel>
-                            <Border Background="#1A1A26" CornerRadius="7,7,0,0" Padding="16,10">
-                                <TextBlock Text="LIVE PREVIEW" FontSize="10.5" FontWeight="SemiBold"
-                                           Foreground="{StaticResource Muted}" />
-                            </Border>
-                            <Grid Height="120">
-                                <StackPanel Orientation="Horizontal"
-                                            HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <StackPanel Margin="0,0,28,0">
-                                        <Border Background="{Binding BackgroundColor}"
-                                                CornerRadius="3" Padding="7,2"
-                                                BorderBrush="#66000000" BorderThickness="1"
-                                                HorizontalAlignment="Center">
-                                            <TextBlock Text="AS" FontWeight="Bold"
-                                                       FontFamily="{Binding FontFamily}"
-                                                       FontSize="{Binding FontSize}"
-                                                       Foreground="{Binding TextColor}" />
-                                        </Border>
-                                        <TextBlock Text="active" FontSize="10.5"
-                                                   Foreground="{StaticResource Muted}"
-                                                   HorizontalAlignment="Center" Margin="0,10,0,0" />
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <Border Background="{Binding InactiveBackgroundColor}"
-                                                CornerRadius="3" Padding="7,2"
-                                                BorderBrush="#66000000" BorderThickness="1"
-                                                HorizontalAlignment="Center">
-                                            <TextBlock Text="DF" FontWeight="Bold"
-                                                       FontFamily="{Binding FontFamily}"
-                                                       FontSize="{Binding FontSize}"
-                                                       Foreground="{Binding TextColor}" />
-                                        </Border>
-                                        <TextBlock Text="filtered out" FontSize="10.5"
-                                                   Foreground="{StaticResource Muted}"
-                                                   HorizontalAlignment="Center" Margin="0,10,0,0" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
+                    <!-- Preview: the same brushes and template the overlay uses. -->
+                    <Border Background="{StaticResource Crust}" BorderBrush="{StaticResource Surface0}"
+                            BorderThickness="1" CornerRadius="8" Height="96" Margin="0,0,0,20">
+                        <ItemsControl ItemsSource="{Binding PreviewHints}"
+                                      ItemTemplate="{StaticResource PreviewHint}"
+                                      ItemsPanel="{StaticResource Row}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
 
+                    <TextBlock Text="TEXT" Style="{StaticResource SectionLabel}" />
                     <Border Style="{StaticResource Card}">
-                        <StackPanel>
-                            <TextBlock Text="TYPE" Style="{StaticResource SectionLabel}" />
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="16" />
-                                    <ColumnDefinition Width="1.4*" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Size" Style="{StaticResource FieldLabel}" />
-                                    <ComboBox ItemsSource="{StaticResource FontSizeList}"
-                                              SelectedValue="{Binding FontSize}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="2">
-                                    <TextBlock Text="Family" Style="{StaticResource FieldLabel}" />
-                                    <ComboBox ItemsSource="{StaticResource FontFamilyList}"
-                                              SelectedValue="{Binding FontFamily}" />
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.8*" />
+                                <ColumnDefinition Width="14" />
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="14" />
+                                <ColumnDefinition Width="1.2*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Size" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{StaticResource FontSizeList}" SelectedValue="{Binding FontSize}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Font" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{Binding FontFamilies}" SelectedValue="{Binding FontFamily}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Colour" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{StaticResource TextColors}"
+                                          ItemTemplate="{StaticResource ColorItemTemplate}"
+                                          SelectedValuePath="Value" SelectedValue="{Binding TextColor}" />
+                            </StackPanel>
+                        </Grid>
                     </Border>
 
+                    <TextBlock Text="BACKGROUND" Style="{StaticResource SectionLabel}" />
                     <Border Style="{StaticResource Card}">
-                        <StackPanel>
-                            <TextBlock Text="COLOURS" Style="{StaticResource SectionLabel}" />
-
-                            <TextBlock Text="Hint background" Style="{StaticResource FieldLabel}" />
-                            <ComboBox ItemsSource="{StaticResource ActiveColors}"
-                                      ItemTemplate="{StaticResource ColorItemTemplate}"
-                                      SelectedValuePath="Value"
-                                      SelectedValue="{Binding BackgroundColor}"
-                                      Margin="0,0,0,16" />
-
-                            <TextBlock Text="Hint background — filtered out" Style="{StaticResource FieldLabel}" />
-                            <ComboBox ItemsSource="{StaticResource InactiveColors}"
-                                      ItemTemplate="{StaticResource ColorItemTemplate}"
-                                      SelectedValuePath="Value"
-                                      SelectedValue="{Binding InactiveBackgroundColor}"
-                                      Margin="0,0,0,16" />
-
-                            <TextBlock Text="Label text" Style="{StaticResource FieldLabel}" />
-                            <ComboBox ItemsSource="{StaticResource TextColors}"
-                                      ItemTemplate="{StaticResource ColorItemTemplate}"
-                                      SelectedValuePath="Value"
-                                      SelectedValue="{Binding TextColor}" />
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
-        </TabItem>
-
-        <!-- ======================================================= ABOUT -->
-        <TabItem Header="About">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="34,30,34,30">
-                <StackPanel>
-                    <TextBlock Text="About" Style="{StaticResource PageTitle}" />
-                    <TextBlock Style="{StaticResource PageSubtitle}"
-                               Text="Hint-based keyboard navigation for Windows." />
-
-                    <Border Style="{StaticResource Card}" Margin="0,24,0,18">
-                        <StackPanel>
-                            <TextBlock Text="HOW IT WORKS" Style="{StaticResource SectionLabel}" />
-                            <TextBlock Style="{StaticResource HelpText}" Margin="0,0,0,10"
-                                       Text="Press the main hotkey and Vimium Desktop walks the focused window's UI Automation tree, then draws a labelled hint over every control it can click. Type the label to activate that control." />
-                            <TextBlock Style="{StaticResource HelpText}"
-                                       Text="The taskbar hotkey does the same for the taskbar and notification area. Press Escape to dismiss the overlay without clicking anything." />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Style="{StaticResource Card}">
-                        <StackPanel>
-                            <TextBlock Text="RUNNING ALONGSIDE A TILING WINDOW MANAGER"
-                                       Style="{StaticResource SectionLabel}" />
-                            <TextBlock Style="{StaticResource HelpText}"
-                                       Text="The hint overlay has to take keyboard focus in order to read what you type, so a tiling WM that colours the focused window's border (GlazeWM, komorebi) will drop that border for as long as the overlay is up, then restore it. Adding an ignore rule for the 'hap' process stops the WM trying to tile or manage the overlay itself." />
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="14" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Hint" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{StaticResource InactiveColors}"
+                                          ItemTemplate="{StaticResource ColorItemTemplate}"
+                                          SelectedValuePath="Value" SelectedValue="{Binding InactiveBackgroundColor}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Matches what you typed" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{StaticResource ActiveColors}"
+                                          ItemTemplate="{StaticResource ColorItemTemplate}"
+                                          SelectedValuePath="Value" SelectedValue="{Binding BackgroundColor}" />
+                            </StackPanel>
+                        </Grid>
                     </Border>
                 </StackPanel>
             </ScrollViewer>

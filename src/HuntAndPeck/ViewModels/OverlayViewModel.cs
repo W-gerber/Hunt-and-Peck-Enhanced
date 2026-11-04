@@ -71,6 +71,11 @@ namespace HuntAndPeck.ViewModels
 
         public Action CloseOverlay { get; set; }
 
+        public bool HasPrefix(string text)
+        {
+            return _hintLookup.ContainsKey(text);
+        }
+
         public string MatchString
         {
             set

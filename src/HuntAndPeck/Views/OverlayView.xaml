@@ -16,35 +16,21 @@
     TextOptions.TextHintingMode="Fixed"
     FocusManager.FocusedElement="{Binding ElementName=MatchStringControl}"
     Loaded="OverlayView_OnLoaded"
-    PreviewKeyDown="OverlayView_OnPreviewKeyDown">
+    PreviewKeyDown="OverlayView_OnPreviewKeyDown"
+    PreviewTextInput="OverlayView_OnPreviewTextInput">
     <local:ForegroundWindow.Resources>
-        <!-- Shared + frozen so every hint reuses the same brushes instead of
-             allocating its own. -->
-        <LinearGradientBrush x:Key="ActiveBg" StartPoint="0,0" EndPoint="0,1" po:Freeze="True">
-            <GradientStop Color="#FFFEF5" Offset="0"/>
-            <GradientStop Color="#FFE44D" Offset="0.3"/>
-            <GradientStop Color="#F5D033" Offset="0.7"/>
-            <GradientStop Color="#E8C028" Offset="1"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="InactiveBg" StartPoint="0,0" EndPoint="0,1" po:Freeze="True">
-            <GradientStop Color="#F5F3E8" Offset="0"/>
-            <GradientStop Color="#EDDA3F" Offset="0.3"/>
-            <GradientStop Color="#E0C230" Offset="0.7"/>
-            <GradientStop Color="#D4B022" Offset="1"/>
-        </LinearGradientBrush>
-        <SolidColorBrush x:Key="ActiveBorder" Color="#C9A825" po:Freeze="True" />
-        <SolidColorBrush x:Key="InactiveBorder" Color="#B89920" po:Freeze="True" />
-
+        <!-- ActiveBg/InactiveBg/ActiveBorder/InactiveBorder are set from the
+             Options colours in OverlayView.xaml.cs, shared by every hint. -->
         <Style x:Key="HintBorderStyle" TargetType="Border">
             <Setter Property="Padding" Value="4 1" />
             <Setter Property="CornerRadius" Value="3" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Background" Value="{StaticResource ActiveBg}" />
-            <Setter Property="BorderBrush" Value="{StaticResource ActiveBorder}" />
+            <Setter Property="Background" Value="{DynamicResource ActiveBg}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ActiveBorder}" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Active}" Value="false">
-                    <Setter Property="Background" Value="{StaticResource InactiveBg}" />
-                    <Setter Property="BorderBrush" Value="{StaticResource InactiveBorder}" />
+                    <Setter Property="Background" Value="{DynamicResource InactiveBg}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource InactiveBorder}" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -58,7 +44,7 @@
                  Text="{Binding MatchString, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
                  Width="1" Height="1" Opacity="0"
                  HorizontalAlignment="Left" VerticalAlignment="Top" />
-        <ItemsControl ItemsSource="{Binding Hints}">
+        <ItemsControl x:Name="HintsControl" ItemsSource="{Binding Hints}" FontWeight="Bold">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas IsItemsHost="True" />
@@ -75,11 +61,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border Style="{StaticResource HintBorderStyle}" Margin="1 1 0 0">
-                        <TextBlock Text="{Binding Label}" FontFamily="{Binding FontFamilyReadValue}" FontWeight="Bold" FontSize="{Binding FontSizeReadValue}">
-                            <TextBlock.Foreground>
-                                <SolidColorBrush Color="{Binding TextColorReadValue}" />
-                            </TextBlock.Foreground>
-                        </TextBlock>
+                        <TextBlock Text="{Binding Label}" />
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
