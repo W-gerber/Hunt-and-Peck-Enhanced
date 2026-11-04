@@ -1,7 +1,8 @@
-using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using HuntAndPeck.Properties;
 using HuntAndPeck.ViewModels;
 
 namespace HuntAndPeck.Views
@@ -12,6 +13,28 @@ namespace HuntAndPeck.Views
         public OverlayView()
         {
             InitializeComponent();
+
+            var settings = Settings.Default;
+            Resources["ActiveBg"] = HintBrushes.Background(settings.BackgroundColor);
+            Resources["InactiveBg"] = HintBrushes.Background(settings.InactiveBackgroundColor);
+            Resources["ActiveBorder"] = HintBrushes.Border(settings.BackgroundColor);
+            Resources["InactiveBorder"] = HintBrushes.Border(settings.InactiveBackgroundColor);
+            HintsControl.Foreground = HintBrushes.Solid(settings.TextColor);
+            HintsControl.FontFamily = new FontFamily(settings.FontFamily);
+            if (double.TryParse(settings.FontSize, NumberStyles.Float, CultureInfo.InvariantCulture, out var size))
+            {
+                HintsControl.FontSize = size;
+            }
+        }
+
+        private void OverlayView_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Drop keys that don't continue any label, so a typo doesn't blank
+            // every hint and need a backspace.
+            if (!((OverlayViewModel)DataContext).HasPrefix(MatchStringControl.Text + e.Text))
+            {
+                e.Handled = true;
+            }
         }
 
         private void OverlayView_OnLoaded(object sender, RoutedEventArgs e)

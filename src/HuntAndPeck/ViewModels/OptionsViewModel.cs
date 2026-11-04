@@ -1,222 +1,192 @@
+using HuntAndPeck.NativeMethods;
 using HuntAndPeck.Properties;
+using HuntAndPeck.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows;
+using System.Linq;
+using System.Windows.Media;
+using System.Windows.Forms;
 
 namespace HuntAndPeck.ViewModels
 {
     internal class OptionsViewModel : INotifyPropertyChanged
     {
-        public OptionsViewModel()
+        private const string InUse = "Another app is already using this shortcut. Pick a different one.";
+
+        private readonly IKeyListenerService _keyListener;
+
+        public OptionsViewModel(IKeyListenerService keyListener)
         {
-            DisplayName = "Options";
-            FontSize = Settings.Default.FontSize;
-            FontFamily = Settings.Default.FontFamily;
-            BackgroundColor = Settings.Default.BackgroundColor;
-            InactiveBackgroundColor = Settings.Default.InactiveBackgroundColor;
-            TextColor = Settings.Default.TextColor;
-            MainHotKeyKey = Settings.Default.MainHotKeyKey;
-            MainHotKeyModifier = Settings.Default.MainHotKeyModifier;
-            TaskbarHotKeyKey = Settings.Default.TaskbarHotKeyKey;
-            TaskbarHotKeyModifier = Settings.Default.TaskbarHotKeyModifier;
-            Settings.Default.PropertyChanged += OnSettingsPropertyChanged;
+            _keyListener = keyListener;
+            RefreshHotKeyStatus();
         }
 
-        public string DisplayName { get; set; }
-
-        private string _fontSize;
+        // Every setter writes straight to Settings; ShellViewModel re-registers
+        // hotkeys from there, and the overlay reads the rest when it opens.
         public string FontSize
-
         {
-            get { return _fontSize; }
-            set
-            {
-                if (_fontSize != value)
-                {
-                    _fontSize = value;
-                    OnPropertyChanged("FontSize");
-                    Settings.Default.FontSize = value;
-                    Settings.Default.Save();
-                }
-            }
+            get { return Settings.Default.FontSize; }
+            set { Save("FontSize", value); }
         }
 
-        private string _fontFamily;
         public string FontFamily
         {
-            get { return _fontFamily; }
-            set
+            get { return Settings.Default.FontFamily; }
+            set { Save("FontFamily", value); }
+        }
+
+        // Only fonts that are actually installed; a missing one silently falls
+        // back to the system font. The saved font stays listed so it still shows.
+        public IList<string> FontFamilies
+        {
+            get
             {
-                if (_fontFamily != value)
+                var installed = new HashSet<string>(Fonts.SystemFontFamilies.Select(f => f.Source));
+                var list = new[] { "Arial", "Calibri", "Cascadia Code", "Cascadia Mono", "Consolas",
+                                   "JetBrains Mono", "JetBrainsMono NF", "Segoe UI", "Tahoma", "Verdana" }
+                    .Where(installed.Contains).ToList();
+                if (!list.Contains(FontFamily))
                 {
-                    _fontFamily = value;
-                    OnPropertyChanged("FontFamily");
-                    Settings.Default.FontFamily = value;
-                    Settings.Default.Save();
+                    list.Add(FontFamily);
                 }
+                return list;
             }
         }
 
-        private string _backgroundColor;
         public string BackgroundColor
         {
-            get { return _backgroundColor; }
-            set
-            {
-                if (_backgroundColor != value)
-                {
-                    _backgroundColor = value;
-                    OnPropertyChanged("BackgroundColor");
-                    Settings.Default.BackgroundColor = value;
-                    Settings.Default.Save();
-                }
-            }
+            get { return Settings.Default.BackgroundColor; }
+            set { Save("BackgroundColor", value); }
         }
 
-        private string _inactiveBackgroundColor;
         public string InactiveBackgroundColor
         {
-            get { return _inactiveBackgroundColor; }
-            set
-            {
-                if (_inactiveBackgroundColor != value)
-                {
-                    _inactiveBackgroundColor = value;
-                    OnPropertyChanged("InactiveBackgroundColor");
-                    Settings.Default.InactiveBackgroundColor = value;
-                    Settings.Default.Save();
-                }
-            }
+            get { return Settings.Default.InactiveBackgroundColor; }
+            set { Save("InactiveBackgroundColor", value); }
         }
 
-        private string _textColor;
         public string TextColor
         {
-            get { return _textColor; }
+            get { return Settings.Default.TextColor; }
+            set { Save("TextColor", value); }
+        }
+
+        // Two plain hints and one matching what you typed, as the overlay shows them.
+        public object[] PreviewHints
+        {
+            get
+            {
+                return new object[]
+                {
+                    new { Label = "SA", Color = InactiveBackgroundColor },
+                    new { Label = "SD", Color = InactiveBackgroundColor },
+                    new { Label = "DF", Color = BackgroundColor }
+                };
+            }
+        }
+
+        public IList<string> MainHotKeyParts
+        {
+            get { return Describe(Settings.Default.MainHotKeyKey, Settings.Default.MainHotKeyModifier); }
+        }
+
+        public IList<string> TaskbarHotKeyParts
+        {
+            get { return Describe(Settings.Default.TaskbarHotKeyKey, Settings.Default.TaskbarHotKeyModifier); }
+        }
+
+        public string MainHotKeyError { get; private set; }
+
+        public string TaskbarHotKeyError { get; private set; }
+
+        // True while a shortcut box is listening for keys.
+        public bool Recording
+        {
             set
             {
-                if (_textColor != value)
+                _keyListener.Paused = value;
+                if (!value)
                 {
-                    _textColor = value;
-                    OnPropertyChanged("TextColor");
-                    Settings.Default.TextColor = value;
-                    Settings.Default.Save();
+                    RefreshHotKeyStatus();
                 }
             }
         }
 
-        private string _mainHotKeyKey;
-        public string MainHotKeyKey
+        public void SetHotKey(bool main, Keys key, KeyModifier modifier)
         {
-            get { return _mainHotKeyKey; }
-            set
+            var prefix = main ? "MainHotKey" : "TaskbarHotKey";
+            Settings.Default[prefix + "Modifier"] = modifier.ToString();
+            Settings.Default[prefix + "Key"] = key.ToString();
+            Settings.Default.Save();
+            OnPropertyChanged(prefix + "Parts");
+        }
+
+        private void RefreshHotKeyStatus()
+        {
+            MainHotKeyError = _keyListener.HotKey?.Registered == false ? InUse : "";
+            TaskbarHotKeyError = _keyListener.TaskbarHotKey?.Registered == false ? InUse : "";
+            OnPropertyChanged("MainHotKeyError");
+            OnPropertyChanged("TaskbarHotKeyError");
+        }
+
+        private void Save(string name, string value)
+        {
+            if ((string)Settings.Default[name] != value)
             {
-                if (_mainHotKeyKey != value)
-                {
-                    _mainHotKeyKey = value;
-                    OnPropertyChanged("MainHotKeyKey");
-                    Settings.Default.MainHotKeyKey = value;
-                    Settings.Default.Save();
-                }
+                Settings.Default[name] = value;
+                Settings.Default.Save();
+                OnPropertyChanged(name);
+                OnPropertyChanged("PreviewHints");
             }
         }
 
-        private string _mainHotKeyModifier;
-        public string MainHotKeyModifier
+        // "Control, Shift" + "OemSemicolon" -> ["Ctrl", "Shift", ";"]
+        public static IList<string> Describe(string key, string modifier)
         {
-            get { return _mainHotKeyModifier; }
-            set
+            var parts = new List<string>();
+            KeyModifier mod;
+            if (Enum.TryParse(modifier, out mod))
             {
-                if (_mainHotKeyModifier != value)
-                {
-                    _mainHotKeyModifier = value;
-                    OnPropertyChanged("MainHotKeyModifier");
-                    Settings.Default.MainHotKeyModifier = value;
-                    Settings.Default.Save();
-                }
+                if (mod.HasFlag(KeyModifier.Windows)) parts.Add("Win");
+                if (mod.HasFlag(KeyModifier.Control)) parts.Add("Ctrl");
+                if (mod.HasFlag(KeyModifier.Alt)) parts.Add("Alt");
+                if (mod.HasFlag(KeyModifier.Shift)) parts.Add("Shift");
             }
-        }
 
-        private string _taskbarHotKeyKey;
-        public string TaskbarHotKeyKey
-        {
-            get { return _taskbarHotKeyKey; }
-            set
+            Keys k;
+            if (!Enum.TryParse(key, out k))
             {
-                if (_taskbarHotKeyKey != value)
-                {
-                    _taskbarHotKeyKey = value;
-                    OnPropertyChanged("TaskbarHotKeyKey");
-                    Settings.Default.TaskbarHotKeyKey = value;
-                    Settings.Default.Save();
-                }
+                parts.Add(key);
+                return parts;
             }
-        }
 
-        private string _taskbarHotKeyModifier;
-        public string TaskbarHotKeyModifier
-        {
-            get { return _taskbarHotKeyModifier; }
-            set
+            switch (k)
             {
-                if (_taskbarHotKeyModifier != value)
-                {
-                    _taskbarHotKeyModifier = value;
-                    OnPropertyChanged("TaskbarHotKeyModifier");
-                    Settings.Default.TaskbarHotKeyModifier = value;
-                    Settings.Default.Save();
-                }
+                case Keys.OemSemicolon: parts.Add(";"); break;
+                case Keys.Oemcomma: parts.Add(","); break;
+                case Keys.OemPeriod: parts.Add("."); break;
+                case Keys.OemQuestion: parts.Add("/"); break;
+                case Keys.OemOpenBrackets: parts.Add("["); break;
+                case Keys.OemCloseBrackets: parts.Add("]"); break;
+                case Keys.OemPipe: parts.Add("\\"); break;
+                case Keys.OemQuotes: parts.Add("'"); break;
+                case Keys.Oemtilde: parts.Add("`"); break;
+                case Keys.OemMinus: parts.Add("-"); break;
+                case Keys.Oemplus: parts.Add("="); break;
+                case Keys.Space: parts.Add("Space"); break;
+                default:
+                    parts.Add(k >= Keys.D0 && k <= Keys.D9 ? ((int)(k - Keys.D0)).ToString() : k.ToString());
+                    break;
             }
-        }
-
-        private void OnSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "FontSize")
-            {
-                FontSize = Settings.Default.FontSize;
-            }
-            else if (e.PropertyName == "FontFamily")
-            {
-                FontFamily = Settings.Default.FontFamily;
-            }
-            else if (e.PropertyName == "BackgroundColor")
-            {
-                BackgroundColor = Settings.Default.BackgroundColor;
-            }
-            else if (e.PropertyName == "InactiveBackgroundColor")
-            {
-                InactiveBackgroundColor = Settings.Default.InactiveBackgroundColor;
-            }
-            else if (e.PropertyName == "TextColor")
-            {
-                TextColor = Settings.Default.TextColor;
-            }
-            else if (e.PropertyName == "MainHotKeyKey")
-            {
-                MainHotKeyKey = Settings.Default.MainHotKeyKey;
-            }
-            else if (e.PropertyName == "MainHotKeyModifier")
-            {
-                MainHotKeyModifier = Settings.Default.MainHotKeyModifier;
-            }
-            else if (e.PropertyName == "TaskbarHotKeyKey")
-            {
-                TaskbarHotKeyKey = Settings.Default.TaskbarHotKeyKey;
-            }
-            else if (e.PropertyName == "TaskbarHotKeyModifier")
-            {
-                TaskbarHotKeyModifier = Settings.Default.TaskbarHotKeyModifier;
-            }
+            return parts;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

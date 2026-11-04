@@ -10,6 +10,9 @@ namespace HuntAndPeck.Services.Interfaces
         public Keys Keys { get; set; }
 
         public int RegistrationId { get; set; }
+
+        // False when Windows refused the combo, i.e. another app already owns it.
+        public bool Registered { get; set; }
     }
 
     internal interface IKeyListenerService
@@ -21,5 +24,9 @@ namespace HuntAndPeck.Services.Interfaces
         HotKey TaskbarHotKey { get; set; }
         HotKey HotKey { get; set; }
         HotKey DebugHotKey { get; set; }
+
+        // Releases every hotkey while true, so Options can record a combo
+        // without the current hotkey firing.
+        bool Paused { get; set; }
     }
 }
