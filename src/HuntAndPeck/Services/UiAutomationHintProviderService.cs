@@ -117,7 +117,7 @@ namespace HuntAndPeck.Services
 
             return new HintSession
             {
-                Hints = result,
+                Hints = HintOverlap.RemoveNearDuplicates(result),
                 OwningWindow = hWnd,
                 OwningWindowBounds = windowBounds,
             };

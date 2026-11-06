@@ -108,8 +108,16 @@ namespace HuntAndPeck.ViewModels
 
                     if (matching.Count == 1)
                     {
-                        matching[0].Hint.Invoke();
+                        // Close first so the target window regains focus before the
+                        // action runs; a dead element must not crash the app.
                         CloseOverlay?.Invoke();
+                        try
+                        {
+                            matching[0].Hint.Invoke();
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
                 else

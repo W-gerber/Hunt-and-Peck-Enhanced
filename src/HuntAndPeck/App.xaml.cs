@@ -49,6 +49,12 @@ namespace HuntAndPeck
             {
 
                 var session = _hintProviderService.EnumHints();
+                if (session == null || session.Hints.Count == 0)
+                {
+                    Shutdown();
+                    return;
+                }
+
                 var overlayWindow = new OverlayView()
                 {
                     DataContext = new OverlayViewModel(session, _hintLabelService)
@@ -60,6 +66,12 @@ namespace HuntAndPeck
 
                 var taskbarHWnd = User32.FindWindow("Shell_traywnd", "");
                 var session = _hintProviderService.EnumHints(taskbarHWnd);
+                if (session == null || session.Hints.Count == 0)
+                {
+                    Shutdown();
+                    return;
+                }
+
                 var overlayWindow = new OverlayView()
                 {
                     DataContext = new OverlayViewModel(session, _hintLabelService)
